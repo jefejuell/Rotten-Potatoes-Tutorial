@@ -1,8 +1,10 @@
 const express = require('express');
-const app = express();
-var exphbs = require('express-handlebars');
+const { engine } = require('express-handlebars');
+//https://stackoverflow.com/questions/69959820/typeerror-exphbs-is-not-a-function
 
-app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+const app = express();
+
+app.engine('handlebars', engine({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 
 
@@ -23,7 +25,8 @@ app.listen(3000, () => {
 // OUR MOCK ARRAY OF PROJECTS
 let reviews = [
     { title: "Great Review", movieTitle: "Batman II" },
-    { title: "Awesome Movie", movieTitle: "Titanic" }
+    { title: "Awesome Movie", movieTitle: "Titanic" },
+    { title: "Pensive Thriller", movieTitle: "Shawshank Redemption"}
   ]
   
   // INDEX
