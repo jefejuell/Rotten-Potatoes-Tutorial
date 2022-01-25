@@ -1,19 +1,47 @@
 const express = require('express');
 const { engine } = require('express-handlebars');
+const app = express();
 //https://stackoverflow.com/questions/69959820/typeerror-exphbs-is-not-a-function
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/rotten-potatoes', { useNewUrlParser: true });
 
 const Review = mongoose.model('Review', {
     title: String,
-    movieTitle: String
+    movieTitle: String,
+    movieReview: String
   });
 
-const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true}));
 
 app.engine('handlebars', engine({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 
+// INDEX
+app.get('/', (req, res) => {
+    Review.find()
+        .then(reviews => {
+            res.render('reviews-index', { reviews: reviews }); 
+        })
+        .catch(err => {
+            console.log(err);
+        })
+})
+
+//NEW review form
+app.get('/reviews/new', (req, res) => {
+    res.render('reviews-new', {});
+})
+
+//CREATE
+app.post('/reviews', (req, res) => {
+    Review.create(req.body).then((review) => {
+        console.log(review);
+        res.redirect('/');
+    }) .catch((err) => {
+        console.log(err.message);
+    })
+})
 
 // app.get('/', (req, res) => {
 //     //res.send('Hello World!');
@@ -36,14 +64,3 @@ app.listen(3000, () => {
 //     { title: "Pensive Thriller", movieTitle: "Shawshank Redemption"}
 //   ]
   
-  // INDEX
-  app.get('/', (req, res) => {
-    Review.find()
-        .then(reviews => {
-           res.render('reviews-index', { reviews: reviews }); 
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    
-  })
